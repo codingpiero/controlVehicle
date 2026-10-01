@@ -6,12 +6,14 @@
     "start:dev": "cross-env NODE_ENV=development nodemon source/server.js"
   },
   "dependencies": {
-    "brcypt": "^1.0.1",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
     "cross-env": "^10.1.0",
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
+    "pg": "^8.23.0",
     "pino": "^10.3.1",
     "zod": "^4.6.5"
   },
