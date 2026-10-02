@@ -8,13 +8,13 @@ async function verifyToken(req,res,next){
     if(!authorization)
         return res.status(401).json({
             success:false,
-            error:'TOKEN_ERROR',
+            error:'INVALID_TOKEN',
             message:'Token no enviado'
         });
     if(authorization.slice(0,7).trim() !== 'Bearer'.trim())
         return res.status(401).json({
             success:false,
-            error:'TOKEN_ERROR',
+            error:'INVALID_TOKEN',
             message:'Token Invalido.'
         });
     let token = authorization.slice(7);
@@ -23,7 +23,7 @@ async function verifyToken(req,res,next){
         if(!decoded)
             return res.status(401).json({
                 success:false,
-                error:'TOKEN_ERROR',
+                error:'INVALID_TOKEN',
                 message:'Token no Valido.'
             });
         req.user = decoded;
@@ -32,7 +32,7 @@ async function verifyToken(req,res,next){
         log.error(e);
         return res.status(401).json({
             success:false,
-            error:'TOKEN_ERROR',
+            error:'EXPIRED_INVALID_TOKEN',
             message:'Token Invalido o Expirado'
         });
     }
@@ -45,7 +45,7 @@ function verifyRol(...roles){
         if(foundRoles.length === 0)
             return res.status(403).json({
                 success:false,
-                error:'VALIDATION_AUTHORIZATION',
+                error:'FORBIDDEN',
                 message:'No tiene permiso.',
             });
         return next();

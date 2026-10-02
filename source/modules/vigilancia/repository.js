@@ -1,4 +1,6 @@
 import { pool } from "../../shared/config/postgres.js";
+import { AppError } from "../../shared/error/AppError.js";
+import { logger } from "../../shared/logger/log.js";
 
 
 async function list() {
@@ -26,8 +28,9 @@ async function list() {
             ORDER BY 
             c.id DESC`);
         return { total: result.rowCount, data:result.rows};
-    } catch (error) {
-        throw Error(error);
+    } catch (e) {
+        logger(e);
+        throw new AppError(500,'DATABASE_ERROR','Error en listar.');
     }
 };
 async function create(data){
@@ -58,9 +61,9 @@ async function create(data){
                 data.foto
             ]);
             return {total:result.rowCount}
-    } catch (error) {
-        throw Error(error);
-    }
+    } catch (e) {
+        logger(e);
+        throw new AppError(500,'DATABASE_ERROR','Error al crear.');    }
 }
 async function get(codigo){
     try {
@@ -88,9 +91,9 @@ async function get(codigo){
             c.id = $1
         `,[codigo]);
     return {total:result.rowCount,data:result.rows};    
-    } catch (error) {
-        throw Error(error);
-    }
+    } catch (e) {
+        logger(e);
+        throw new AppError(500,'DATABASE_ERROR','Error al obtener la informacion.');    }
 }
 
 async function getPhoto(codigo){
@@ -103,9 +106,9 @@ async function getPhoto(codigo){
             WHERE
             id = $1`,[codigo]);
         return {total:result.rowCount, data:result.rows[0]};
-    } catch (error) {
-        throw Error(error);
-    }
+    } catch (e) {
+        logger(e);
+        throw new AppError(500,'DATABASE_ERROR','Error al obtener la foto.');    }
 }
 
 async function remove(codigo){
@@ -118,8 +121,46 @@ async function remove(codigo){
             codigo
         ]);
     return {total:result.rowCount};
-    } catch (error) {
-        throw Error(error);
+    } catch (e) {
+        logger(e);
+        throw new AppError(500,'DATABASE_ERROR','Error al eliminar.');    }
+}
+
+async function update(data){
+    try {
+        const result = await pool.query(`
+            UPDATE lobos.control_vehiculo
+            SET
+            id_documento = $1,
+            nombres = $2,
+            apellidos = $3,
+            placa_vehiculo = $4,
+            color_vehiculo = $5,
+            cant_pasajero = $6,
+            nombre_visita = $7,
+            direccion_visita = $8,
+            motivo_ingreso = $9,
+            fecha_salida = $10,
+            foto = $11
+            WHERE
+            id = $12`,[
+                data.id_documento,
+                data.nombres,
+                data.apellidos,
+                data.placa_vehiculo,
+                data.color_vehiculo,
+                data.cant_pasajero,
+                data.nombre_visita,
+                data.direccion_visita,
+                data.motivo_ingreso,
+                data.fecha_salida,
+                data.foto,
+                data.id
+            ])
+        return {total:result.rowCount};
+    } catch (e) {
+        logger(e);
+        throw new AppError(500,'DATABASE_ERROR','Error al actualizar');
     }
 }
 
@@ -129,4 +170,5 @@ export default {
     get,
     getPhoto,
     remove,
+    update,
 }
