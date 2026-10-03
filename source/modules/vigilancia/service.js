@@ -34,7 +34,7 @@ function ServiceVigilancia(injectedStore){
         if(Number.isNaN(id))
             throw new AppError(400,'INVALID_CODIGO','El codigo tiene un formato invalido.');
         const responseDatabase = await store.getPhoto(id);
-        if(responseDatabase.data.foto === null || responseDatabase.total == undefined)
+        if(responseDatabase.total === 0  || responseDatabase.total === undefined)
             return {status:200,message:'No hay foto'}
         let base64 = responseDatabase.data.foto.toString('base64');
         return {status:200,message:'Se encontraron resultados.',base64:`data:image/jpeg;base64,${base64}`};
